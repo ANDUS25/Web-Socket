@@ -1,25 +1,20 @@
-import { WebSocketServer } from "ws";
+import express from "express";
+import { Server } from "socket.io";
+import { createServer } from "node:http";
 
-const wss = new WebSocketServer({ port: 8080 });
+const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer);
 
-// Connection event
-
-wss.on("connection", (socket, request) => {
-  socket.on("message", (rawData) => {
-    const data = rawData.toString();
-    console.log("rawData", data);
-  });
-
-  socket.on("error", () => {
-    console.error("This is an error", error);
-  });
-
-  socket.on("close", () => {
-    console.log("Client is disconnected");
-  });
+io.on("connection", (socket) => {
+  console.log("Connection is initiated".socket);
 });
 
-console.log("WebSocket server is running on wss://localhost:8080");
+app.get("/", (req, res) => {
+  res.setHeader("Content-Type", "text/html");
+  res.send("<h1>Hello World!</h1>");
+});
 
-// to run this on client side in terminal of the VSCode
-// type wscat -c ws:localhost:8080
+httpServer.listen(3000, () => {
+  console.log("Server is running on port 3000");
+});

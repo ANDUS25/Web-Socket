@@ -20,11 +20,10 @@
   },
   "homepage": "https://github.com/ANDUS25/Web-Socket#readme",
   "dependencies": {
-    "socket.io": "^4.8.3",
-    "ws": "8.19.0"
+    "express": "5.2.1",
+    "socket.io": "4.8.3"
   },
   "devDependencies": {
-    "@types/node": "25.3.3",
-    "@types/ws": "8.18.1"
+    "@types/node": "25.3.3"
   }
 }
