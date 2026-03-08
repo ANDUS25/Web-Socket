@@ -6,16 +6,34 @@ import colors from "colors";
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
+  // using this cors because front and server(db and web-socket) are running on different port
   cors: {
-    origin: "http://localhost:5173/",
+    // using "*" for all client those who hit this web socket url
+    origin: "*",
   },
 });
 
 io.on("connection", (socket) => {
   console.log("Connection is initiated", colors.bold.bgGreen(socket.id));
 
-  socket.on("joinRoom", (userInfo) => {
-    console.log(`${userInfo.name} has joined the room.`);
+  socket.on("joinRoom", async ({ userName }) => {
+    console.log(`${userName} has joined the room.`);
+
+    await socket.join("group");
+
+    // Emit to all users in the group, including the joining user
+    io.to("group").emit("newUserJoined", {
+      message: `${userName} has joined the room!`,
+      user: "System",
+    });
+  });
+
+  socket.on("ChatMessage", async ({ message, user }) => {
+    console.log("message", message);
+
+    await socket.join("group");
+
+    io.to("group").emit("newChatMessage", { message, user });
   });
 });
 
