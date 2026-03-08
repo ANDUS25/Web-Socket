@@ -1,5 +1,5 @@
-const checkSpecialChar = (info) =>{
-info
-}
+const checkSpecialChar = (info) => {
+  return /[^a-zA-Z]/.test(info);
+};
 
-export {checkSpecialChar}
+export { checkSpecialChar };
