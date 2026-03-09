@@ -1,7 +1,8 @@
-import express from "express";
-import { Server } from "socket.io";
-import { createServer } from "node:http";
 import colors from "colors";
+import express from "express";
+import { createServer } from "node:http";
+import { Server } from "socket.io";
+import { Events } from "./utils/String";
 
 const app = express();
 const httpServer = createServer(app);
@@ -13,27 +14,27 @@ const io = new Server(httpServer, {
   },
 });
 
-io.on("connection", (socket) => {
+io.on(Events.CONNECTION, (socket) => {
   console.log("Connection is initiated", colors.bold.bgGreen(socket.id));
 
-  socket.on("joinRoom", async ({ userName }) => {
+  socket.on(Events.JOIN_ROOM, async ({ userName }) => {
     console.log(`${userName} has joined the room.`);
 
-    await socket.join("group");
+    await socket.join(Events.GROUP);
 
     // Emit to all users in the group, including the joining user
-    io.to("group").emit("newUserJoined", {
+    io.to(Events.GROUP).emit(Events.NEW_USER_JOINED, {
       message: `${userName} has joined the room!`,
-      user: "System",
+      user: Events.SYSTEM,
     });
   });
 
-  socket.on("ChatMessage", async ({ message, user }) => {
+  socket.on(Events.CHAT_MESSAGE, async ({ message, user }) => {
     console.log("message", message);
 
-    await socket.join("group");
+    await socket.join(Events.GROUP);
 
-    io.to("group").emit("newChatMessage", { message, user });
+    io.to(Events.GROUP).emit(Events.NEW_CHAT_MESSAGE, { message, user });
   });
 });
 

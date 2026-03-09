@@ -1,11 +1,11 @@
 import { useRef, useState } from "react";
 import Color from "../utils/Colors";
 import { checkSpecialChar } from "../utils/CommonUtils";
-import { Error, Title } from "../utils/String";
+import { Error, Events, Title } from "../utils/String";
 import { connectWebSocket } from "../ws";
+import styles from "./Styles";
 
 function App() {
-
   const socketRef = useRef(null)
 
   const [userName, setUserName] = useState('')
@@ -33,26 +33,25 @@ function App() {
     // initiate the socket connection with useRef instead of useState 
     socketRef.current = connectWebSocket()
 
-    // Add listeners once
-    socketRef.current.on("newUserJoined", (message) => {
+    // Add listeners once for new user join message
+    socketRef.current.on(Events.NEW_USER_JOINED, (message) => {
       setMessageQueue(prev => [...prev, message])
     })
 
-    socketRef.current.on("newChatMessage", (message) => {
-      console.log('message', message);
+    socketRef.current.on(Events.NEW_CHAT_MESSAGE, (message) => {
       setMessageQueue(prev => [...prev, message])
     })
 
     // Emit joinRoom when connected
-    socketRef.current.on("connect", () => {
-      socketRef.current.emit("joinRoom", { userName })
+    socketRef.current.on(Events.CONNECT, () => {
+      socketRef.current.emit(Events.JOIN_ROOM, { userName })
     })
   }
 
   const sendMessage = () => {
     if (!socketRef.current || !userMessageInfo.trim()) return;
 
-    socketRef.current.emit('ChatMessage', { message: userMessageInfo, user: userName })
+    socketRef.current.emit(Events.CHAT_MESSAGE, { message: userMessageInfo, user: userName })
     setUserMessageInfo("")
   }
 
@@ -84,11 +83,8 @@ function App() {
             {messageQueue && messageQueue.map((item, index) => {
               const isSelf = item.user === userName;
               return (
-                <div key={index} style={[styles.messageView, { justifyContent: isSelf ? 'flex-end' : 'flex-start', }]}>
-                  <div style={[styles.innerMessageView, {
-                    backgroundColor: isSelf ? '#007bff' : '#f1f1f1',
-                    color: isSelf ? Color.White : '#000',
-                  }]}>
+                <div key={index} style={{ ...styles.messageView, justifyContent: isSelf ? 'flex-end' : 'flex-start' }}>
+                  <div style={{ ...styles.innerMessageView, backgroundColor: isSelf ? Color.LightBlue : Color.LightOffWhite, color: isSelf ? Color.White : Color.Black }}>
                     {!isSelf && <strong>{item.user}: </strong>}
                     {item.message}
                   </div>
@@ -100,7 +96,7 @@ function App() {
           <div style={styles.inputView} >
             <input
               value={userMessageInfo}
-              placeholder="Send a message"
+              placeholder={Title.SEND_A_MESSAGE}
               style={styles.inputMainView}
               onChange={(e) => setUserMessageInfo(e.target.value)}
             />
@@ -109,37 +105,13 @@ function App() {
               onClick={sendMessage}
               style={styles.sendButtonView}
             >
-              {Title.SEND}
+              {Title.SEND.toLowerCase()}
             </div>
           </div>
         </div>
       }
     </div>
   )
-}
-
-const styles = {
-  container: { justifyContent: 'center', alignItems: 'center', display: 'flex', height: '100vh', width: '100vw' },
-  childView: { display: 'flex', flexDirection: 'column', justifyContent: 'center', alignContent: 'space-between', backgroundColor: Color.OffWhite, padding: 50, borderRadius: 20 },
-  userNameInput: { color: Color.LightGray },
-  textInput: { border: "none", padding: 20, borderRadius: 20, backgroundColor: Color.White, color: Color.Black },
-  submitButton: { display: 'flex', justifyContent: 'center', backgroundColor: Color.LightBlue, borderRadius: 20, marginTop: 20, cursor: 'pointer', },
-  submitText: { color: Color.Black },
-  textError: { color: Color.Red },
-  conversationView: { width: '50vw', height: '100vh', backgroundColor: "#5d605d", borderRadius: 30, display: 'flex', flexDirection: 'column' },
-  listQueue: { flex: 1, overflowY: 'auto', padding: '20px' },
-  messageView: {
-    display: 'flex',
-    marginBottom: '10px'
-  },
-  innerMessageView: {
-    padding: '10px 15px',
-    borderRadius: '20px',
-    maxWidth: '70%',
-    wordWrap: 'break-word'
-  }, inputView: { display: "flex", justifyContent: "space-between", padding: '20px', borderTop: '1px solid #ccc' },
-  inputMainView: { flex: 1, borderRadius: 30, padding: "10px 20px", border: "none", marginRight: '10px' },
-  sendButtonView: { cursor: 'pointer', backgroundColor: "green", padding: '10px 20px', borderRadius: 30, display: 'flex', justifyContent: 'center', alignItems: 'center', color: Color.White }
 }
 
 export default App

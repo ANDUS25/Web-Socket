@@ -3,6 +3,7 @@ const Title = {
   SUBMIT: "Submit",
   USER_NAME: "User Name",
   SEND: "Send",
+  SEND_A_MESSAGE: "Send a message",
 };
 
 const Error = {
@@ -10,4 +11,12 @@ const Error = {
   SPECIAL_CHARACTER_NOT_ALLOWED: "Special character or number not allowed",
 };
 
-export { Error, Title };
+const Events = {
+  CHAT_MESSAGE: "ChatMessage",
+  CONNECT: "connect",
+  JOIN_ROOM: "joinRoom",
+  NEW_CHAT_MESSAGE: "newChatMessage",
+  NEW_USER_JOINED: "newUserJoined",
+};
+
+export { Error, Title, Events };
