@@ -2,12 +2,12 @@ import colors from "colors";
 import express from "express";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
-import { Events } from "./utils/String";
+import { Events } from "./utils/String.js";
 
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-  // using this cors because front and server(db and web-socket) are running on different port
+  // using this cors because front and server(db and `web-socket) are running on different port
   cors: {
     // using "*" for all client those who hit this web socket url
     origin: "*",
@@ -18,7 +18,7 @@ io.on(Events.CONNECTION, (socket) => {
   console.log("Connection is initiated", colors.bold.bgGreen(socket.id));
 
   socket.on(Events.JOIN_ROOM, async ({ userName }) => {
-    console.log(`${userName} has joined the room.`);
+    // console.log(`${userName} has joined the room.`);
 
     await socket.join(Events.GROUP);
 
@@ -30,7 +30,7 @@ io.on(Events.CONNECTION, (socket) => {
   });
 
   socket.on(Events.CHAT_MESSAGE, async ({ message, user }) => {
-    console.log("message", message);
+    // console.log("message", message);
 
     await socket.join(Events.GROUP);
 

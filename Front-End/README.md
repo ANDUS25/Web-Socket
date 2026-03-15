@@ -16,3 +16,9 @@ Note: This will impact Vite dev & build performances.
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+
+-------------------------------------------------------------------------------------------------------------------
+1. to run this application use the command "npm run dev"
+
+2. Make sure both server and web-socket server should run on same port for now it is "localhost:3000".

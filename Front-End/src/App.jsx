@@ -78,7 +78,6 @@ function App() {
 
       {hideNameInfo &&
         <div style={styles.conversationView}>
-
           <div style={styles.listQueue}>
             {messageQueue && messageQueue.map((item, index) => {
               const isSelf = item.user === userName;
@@ -103,8 +102,7 @@ function App() {
 
             <div
               onClick={sendMessage}
-              style={styles.sendButtonView}
-            >
+              style={styles.sendButtonView}            >
               {Title.SEND.toLowerCase()}
             </div>
           </div>
